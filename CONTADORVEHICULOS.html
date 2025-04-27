@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Vehículos y Clasificaciones</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      margin: 20px;
+      background-color: #f0f4f8;
+      color: #333;
+    }
+    h2, h3 {
+      color: #0d47a1;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .buttons-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .grid-buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    button {
+      padding: 10px;
+      font-size: 14px;
+      min-width: 90px;
+      height: 40px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      background-color: #1565c0;
+      transform: scale(1.05);
+      box-shadow: 0px 4px 10px rgba(21, 101, 192, 0.4);
+    }
+    table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 90%;
+      background-color: white;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #1976d2;
+      color: white;
+      font-weight: bold;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    #conteoContainer table {
+      margin-top: 20px;
+      width: 100%;
+      background-color: #ffffff;
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    #conteoContainer th {
+      background-color: #0d47a1;
+      color: #fff;
+    }
+    #conteoContainer td {
+      background-color: #f5f7fa;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Registro de Vehículos y Clasificaciones</h2>
+
+<div class="container">
+
+  <!-- Botones de Vehículos -->
+  <div>
+    <h3>Seleccione un tipo de vehículo:</h3>
+    <div class="buttons-group">
+      <button onclick="seleccionar('STATION WAGON', 'vehiculo')">STATION WAGON</button>
+      <button onclick="seleccionar('SUVs', 'vehiculo')">SUVs</button>
+      <button onclick="seleccionar('Pick Up', 'vehiculo')">Pick Up</button>
+      <button onclick="seleccionar('Combi', 'vehiculo')">Combi</button>
+      <button onclick="seleccionar('Couster', 'vehiculo')">Couster</button>
+      <button onclick="seleccionar('Bus', 'vehiculo')">Bus</button>
+      <button onclick="seleccionar('Camion', 'vehiculo')">Camion</button>
+    </div>
+  </div>
+
+  <!-- Botones de Clasificación tipo MATRIZ -->
+  <div>
+    <h3>Seleccione una clasificación:</h3>
+    <div class="grid-buttons">
+      <!-- Vía 1 -->
+      <button onclick="seleccionar('1.d.5', 'clasificacion')">1.d.5</button>
+      <button onclick="seleccionar('2.d.3', 'clasificacion')">2.d.3</button>
+      <button onclick="seleccionar('3.a', 'clasificacion')">3.a</button>
+      <button onclick="seleccionar('4.a.2', 'clasificacion')">4.a.2</button>
+      <button onclick="seleccionar('5.a.2', 'clasificacion')">5.a.2</button>
+
+      <button onclick="seleccionar('1.d.4', 'clasificacion')">1.d.4</button>
+      <button onclick="seleccionar('2.i.1', 'clasificacion')">2.i.1</button>
+      <button onclick="seleccionar('3.d.2', 'clasificacion')">3.d.2</button>
+      <button onclick="seleccionar('4.d.1', 'clasificacion')">4.d.1</button>
+      <button onclick="seleccionar('5.d.1', 'clasificacion')">5.d.1</button>
+
+      <button onclick="seleccionar('1.a', 'clasificacion')">1.a</button>
+      <button onclick="seleccionar('2.a.4', 'clasificacion')">2.a.4</button>
+      <button onclick="seleccionar('3.i.4', 'clasificacion')">3.i.4</button>
+      <button onclick="seleccionar('4.i.3', 'clasificacion')">4.i.3</button>
+      <button onclick="seleccionar('5.i.3', 'clasificacion')">5.i.3</button>
+
+      <button onclick="seleccionar('1.i.2', 'clasificacion')">1.i.2</button>
+      <button onclick="seleccionar('2.a.5', 'clasificacion')">2.a.5</button>
+      <button onclick="seleccionar('3.i.5', 'clasificacion')">3.i.5</button>
+      <div></div>
+      <button onclick="seleccionar('5.u.4', 'clasificacion')">5.u.4</button>
+
+      <button onclick="seleccionar('1.u.3', 'clasificacion')">1.u.3</button>
+      <div></div>
+      <button onclick="seleccionar('3.u.1', 'clasificacion')">3.u.1</button>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+
+  <!-- Botones de acciones -->
+  <div class="buttons-group">
+    <button onclick="guardarExcel()">Guardar en Excel</button>
+    <button onclick="reiniciar()">Reiniciar</button>
+    <button onclick="eliminarUltimo()">Eliminar Último Registro</button>
+    <button onclick="mostrarConteo()">Ver Conteo</button>
+  </div>
+
+  <!-- Tabla de Registros -->
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Vehículo</th>
+        <th>Clasificación</th>
+        <th>Fecha</th>
+        <th>Hora</th>
+      </tr>
+    </thead>
+    <tbody id="registroTabla"></tbody>
+  </table>
+
+  <!-- Conteo -->
+  <div id="conteoContainer"></div>
+
+</div>
+
+<script>
+  const registros = [];
+  let vehiculoSeleccionado = '';
+  let clasificacionSeleccionada = '';
+
+  const vehiculos = ["STATION WAGON", "SUVs", "Pick Up", "Combi", "Couster", "Bus", "Camion"];
+  const clasificaciones = [
+    "1.d.5", "1.d.4", "1.a", "1.i.2", "1.u.3",
+    "2.d.3", "2.i.1", "2.a.4", "2.a.5",
+    "3.a", "3.d.2", "3.i.4", "3.i.5", "3.u.1",
+    "4.a.2", "4.d.1", "4.i.3",
+    "5.a.2", "5.d.1", "5.i.3", "5.u.4"
+  ];
+
+  function seleccionar(valor, tipo) {
+    if (tipo === 'vehiculo') {
+      vehiculoSeleccionado = valor;
+    } else if (tipo === 'clasificacion') {
+      clasificacionSeleccionada = valor;
+    }
+
+    if (vehiculoSeleccionado && clasificacionSeleccionada) {
+      const fecha = new Date();
+      const fechaStr = fecha.toLocaleDateString();
+      const horaStr = fecha.toLocaleTimeString();
+
+      registros.push({
+        id: registros.length + 1,
+        vehiculo: vehiculoSeleccionado,
+        clasificacion: clasificacionSeleccionada,
+        fecha: fechaStr,
+        hora: horaStr
+      });
+
+      actualizarTabla();
+      vehiculoSeleccionado = '';
+      clasificacionSeleccionada = '';
+    }
+  }
+
+  function actualizarTabla() {
+    const tabla = document.getElementById("registroTabla");
+    tabla.innerHTML = '';
+    registros.forEach(registro => {
+      const fila = tabla.insertRow();
+      fila.insertCell(0).textContent = registro.id;
+      fila.insertCell(1).textContent = registro.vehiculo;
+      fila.insertCell(2).textContent = registro.clasificacion;
+      fila.insertCell(3).textContent = registro.fecha;
+      fila.insertCell(4).textContent = registro.hora;
+    });
+  }
+
+  function guardarExcel() {
+    const ws_data = [
+      ["#", "Vehículo", "Clasificación", "Fecha", "Hora"],
+      ...registros.map(r => [r.id, r.vehiculo, r.clasificacion, r.fecha, r.hora])
+    ];
+
+    const conteo = obtenerConteo();
+    ws_data.push([""]);
+    ws_data.push(["Conteo de Vehículos y Clasificaciones"]);
+    ws_data.push(["Vehículo \\ Clasificación", ...clasificaciones]);
+
+    vehiculos.forEach(vehiculo => {
+      ws_data.push([vehiculo, ...clasificaciones.map(c => conteo[vehiculo][c])]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Registros");
+
+    XLSX.writeFile(wb, "RegistroVehiculos.xlsx");
+  }
+
+  function reiniciar() {
+    registros.length = 0;
+    actualizarTabla();
+    document.getElementById("conteoContainer").innerHTML = "";
+  }
+
+  function eliminarUltimo() {
+    registros.pop();
+    actualizarTabla();
+  }
+
+  function obtenerConteo() {
+    const conteo = {};
+    vehiculos.forEach(v => {
+      conteo[v] = {};
+      clasificaciones.forEach(c => {
+        conteo[v][c] = 0;
+      });
+    });
+    registros.forEach(r => {
+      conteo[r.vehiculo][r.clasificacion]++;
+    });
+    return conteo;
+  }
+
+  function mostrarConteo() {
+    const conteo = obtenerConteo();
+    let conteoHTML = `
+      <h3>Conteo de Vehículos y Clasificaciones</h3>
+      <table>
+        <thead>
+          <tr><th>Vehículo \\ Clasificación</th>${clasificaciones.map(c => `<th>${c}</th>`).join('')}</tr>
+        </thead>
+        <tbody>
+    `;
+    vehiculos.forEach(v => {
+      conteoHTML += `<tr><th>${v}</th>${clasificaciones.map(c => `<td>${conteo[v][c]}</td>`).join('')}</tr>`;
+    });
+    conteoHTML += "</tbody></table>";
+    document.getElementById("conteoContainer").innerHTML = conteoHTML;
+  }
+</script>
+
+</body>
+</html>
